@@ -8,9 +8,12 @@ import RepeatIcon from "@material-ui/icons/Repeat";
 import { Grid, Slider } from "@material-ui/core";
 import PlaylistPlayIcon from "@material-ui/icons/PlaylistPlay";
 import VolumeDownIcon from "@material-ui/icons/VolumeDown";
+import {useDataLayerValue} from '../DataLayer';
 
 
 function Footer() {
+    const[{theme}, dispatch] = useDataLayerValue();
+    
     return (
         <div className='footer'>
             <div className = 'footer__left'>
@@ -21,14 +24,14 @@ function Footer() {
                 </div>
             </div>
             <div className = 'footer__center'>
-                <ShuffleIcon className = 'footer__green' />
+                <ShuffleIcon className = {`footer__${theme}`} />
                 <SkipPreviousIcon className = 'footer__icon' />
                 <PlayCircleOutlineIcon fontSize = 'large' className = 'footer__icon' />
                 <SkipNextIcon className = 'footer__icon' />
-                <RepeatIcon className = 'footer__green' />
+                <RepeatIcon className = {`footer__${theme}`} />
 
             </div>
-            <div className = 'footer__right'>
+            <div className = {`footer__right__${theme}`}>
                 <Grid container spacing={2}>
                     <Grid item>
                         <PlaylistPlayIcon />

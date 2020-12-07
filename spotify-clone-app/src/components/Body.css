@@ -1,7 +1,20 @@
 .body{
     padding: 30px;
     flex:0.8;
-    background: linear-gradient(rgb(91,87,115), rgba(0,0,0,1));
     height: 100vh;
     color: white; 
 }
+
+#green{
+ background: linear-gradient( rgb(99,212,113), rgba(35,51,41,1));
+}
+
+#blue{
+    background: linear-gradient( rgb(0,159,253), rgba(42,42,114,1));
+}
+
+
+
+
+
+

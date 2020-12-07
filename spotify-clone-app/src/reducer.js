@@ -3,6 +3,7 @@ export const initialState = {
     playlists: [],
     token: 'BQCv3rLOKmAM-yQkcEcVO9mURwjPhtKTWitUuEUAwXExFOP2IUQJMUEM49ie58DeQEy-yZAFvXAeD5qKs4Wde6h93WpXUhvd39goe3MuHIWS3htWuO6yTzTyVNRSGZ8OkGlnCPWaHsbFo6vzcKJKuxz-8p-WClfKfExl_lKSnnUiPRw4',
     playlists:[],
+    theme: 'green'
 };
 
 const reducer = (state, action) => {
@@ -25,6 +26,12 @@ const reducer = (state, action) => {
             return{
                 ...state,
                 playlists: action.playlists
+            }
+        
+        case 'SET_THEME':
+            return{
+                ...state,
+                theme: action.theme
             }
         
         default:
