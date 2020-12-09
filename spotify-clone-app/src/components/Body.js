@@ -10,13 +10,55 @@ import MoreHorizIcon from "@material-ui/icons/MoreHoriz";
 
 function Body({spotify}) {
     const [{theme, discover_weekly}, dispatch] = useDataLayerValue();
+
+    const playPlaylist = (id) => {
+        spotify
+          .play({
+            context_uri: `spotify:playlist:37i9dQZEVXcJZyENOWUFo7`,
+          })
+          .then((res) => {
+            spotify.getMyCurrentPlayingTrack().then((r) => {
+              dispatch({
+                type: "SET_ITEM",
+                item: r.item,
+              });
+              dispatch({
+                type: "SET_PLAYING",
+                playing: true,
+              });
+            });
+          });
+      };
+
+
+    const playSong = (id) => {
+        spotify.play({uris: [`spotify:track:${id}`],})
+        .then((res) => {
+            
+            spotify.getMyCurrentPlayingTrack().then((r) => {
+                console.log(r);
+                dispatch({
+                    type: "SET_ITEM",
+                    item: r.item,
+                });
+                
+                dispatch({
+                    type: "SET_PLAYING",
+                    playing: true,
+                });
+            });
+        });
+    };
     
     return (
         <div className = 'body' id = {theme}>
             <Header spotify = {spotify}/>
 
             <div className="body__info">
-                <img src={discover_weekly?.images[0].url} alt=""/>
+                <div className="body__image">
+                    <img src={discover_weekly?.images[0].url} alt=""/>
+                </div>
+                
                 <div className="body__infoText">
                     <strong>PLAYLIST</strong>
                     <h2>Discover Weekly</h2>
@@ -26,13 +68,13 @@ function Body({spotify}) {
 
             <div className="body__songs">
                 <div className="body__icons">
-                    <PlayCircleFilledIcon className = "body__shuffle" />
+                    <PlayCircleFilledIcon className = "body__shuffle" onClick={playPlaylist}/>
                     <FavoriteIcon fontSize="large" />
                     <MoreHorizIcon />
                 </div>
 
                 {discover_weekly?.tracks.items.map((item) =>
-                    <SongRow track={item.track} />
+                    <SongRow playSong = {playSong} track={item.track} />
                 )}
             </div>
 

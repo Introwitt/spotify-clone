@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './Footer.css';
 import PlayCircleOutlineIcon from "@material-ui/icons/PlayCircleOutline";
+import PauseCircleOutlineIcon from "@material-ui/icons/PauseCircleOutline";
 import SkipPreviousIcon from "@material-ui/icons/SkipPrevious";
 import SkipNextIcon from "@material-ui/icons/SkipNext";
 import ShuffleIcon from "@material-ui/icons/Shuffle";
@@ -11,23 +12,107 @@ import VolumeDownIcon from "@material-ui/icons/VolumeDown";
 import {useDataLayerValue} from '../DataLayer';
 
 
-function Footer() {
-    const[{theme}, dispatch] = useDataLayerValue();
+function Footer({spotify}) {
+    const[{theme, item, playing}, dispatch] = useDataLayerValue();
+
+    useEffect(() => {
+        spotify.getMyCurrentPlaybackState().then((r) => {
+            dispatch({
+              type: "SET_PLAYING",
+              playing: r.is_playing,
+            });
+      
+            dispatch({
+              type: "SET_ITEM",
+              item: r.item,
+            });
+        });
+    },[spotify]);
+
+    const handlePlayPause = () => {
+        if (playing) {
+          spotify.pause();
+          dispatch({
+            type: "SET_PLAYING",
+            playing: false,
+          });
+        } else {
+          spotify.play();
+          dispatch({
+            type: "SET_PLAYING",
+            playing: true,
+          });
+        }
+    };
+
+    const skipPrevious = () => {
+        spotify.skipToPrevious().then(() => {
+            spotify.getMyCurrentPlayingTrack().then((r) => {
+                dispatch({
+                  type: "SET_ITEM",
+                  item: r.item,
+                });
+                dispatch({
+                  type: "SET_PLAYING",
+                  playing: true,
+                });
+            });
+        });  
+    };
+    
+
+    const skipNext = () => { 
+        spotify.skipToNext().then(() => {
+            spotify.getMyCurrentPlayingTrack().then((r) => {
+                console.log(r);
+                dispatch({
+                    type: "SET_ITEM",
+                    item: r.item,
+                });
+                dispatch({
+                    type: "SET_PLAYING",
+                    playing: true,
+                });
+            })
+        })
+    }
+
     
     return (
         <div className='footer'>
             <div className = 'footer__left'>
-                <img src = 'https://upload.wikimedia.org/wikipedia/en/1/17/Ellie_Goulding_-_Love_Me_Like_You_Do.png' className = 'footer__albumLogo' alt = '' />
-                <div className = 'footer__songInfo'>
-                    <h4>Love Me Like You Do</h4>
-                    <p>Ellie Goulding</p>
-                </div>
+                <img src = {item?.album.images[0].url}  className = 'footer__albumLogo' alt = {item?.name} />
+                {item ? (
+                    <div className="footer__songInfo">
+                        <h4>{item.name}</h4>
+                        <p>{item.artists.map((artist) => artist.name).join(", ")}</p>
+                    </div>
+                ):(
+                    <div className="footer__songInfo">
+                        <h4>No song is playing</h4>
+                        <p>...</p>
+                    </div>
+                )
+                }
             </div>
             <div className = 'footer__center'>
                 <ShuffleIcon className = {`footer__${theme}`} />
-                <SkipPreviousIcon className = 'footer__icon' />
-                <PlayCircleOutlineIcon fontSize = 'large' className = 'footer__icon' />
-                <SkipNextIcon className = 'footer__icon' />
+                <SkipPreviousIcon onClick = {skipPrevious}  className = 'footer__icon' />
+                {playing ? (
+                    <PauseCircleOutlineIcon
+                        onClick={handlePlayPause}
+                        fontSize="large"
+                        className="footer__icon"
+                    />
+                ) : (
+                    <PlayCircleOutlineIcon
+                        onClick={handlePlayPause}
+                        fontSize="large"
+                        className="footer__icon"
+                    />
+                )}
+
+                <SkipNextIcon onClick = {skipNext} className = 'footer__icon' />
                 <RepeatIcon className = {`footer__${theme}`} />
 
             </div>
